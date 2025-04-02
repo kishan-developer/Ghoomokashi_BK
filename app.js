@@ -9,14 +9,10 @@ connectDb();
 const app = express();
 app.use(cors());
 app.use('/uploads', express.static("uploads"))
-
 app.use(express.json()); // it helps to console req.body data in console 
 
 // setting the port usign env file using dotenc package
 const port = process.env.PORT || 5001;
-
-
-// student all routes here  
 
 // all student authentication
 app.use("/api/service", require("./Routes/ServiceRoutes"));
@@ -24,14 +20,11 @@ app.use("/api/service", require("./Routes/ServiceRoutes"));
 // img file to url 
 app.use("/api/img", require("./Routes/ImgToUrlRoutes"));
 
-
 // packages api route
 app.use("/api/package", require("./Routes/PackageRoutes"));
 
-
 // blog post api router
 app.use("/api/blog", require("./Routes/BlogRoutes"));
-
 
 // admin authentication 
 app.use("/api/auth", require("./Routes/AuthRoutes"))
