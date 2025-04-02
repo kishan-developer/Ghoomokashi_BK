@@ -11,7 +11,6 @@ router.put("/:_id", updateBlogPost);
 
 router.delete("/:_id", deleteBlogPost)
 
-
 router.post("/create", createBlogPost)
 
 module.exports = router;
