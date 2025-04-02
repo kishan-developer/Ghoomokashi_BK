@@ -1,6 +1,6 @@
 
 const asyncHandler = require("express-async-handler");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const serviceModel = require("../Models/ServiceModel");
 
