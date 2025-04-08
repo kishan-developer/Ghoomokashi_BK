@@ -1,11 +1,11 @@
-
 const express = require("express");
-const { uploadfile } = require("../Controllers/ImgToUrl");
-const validateToken = require("../Middlewares/validateToken");
 const router = express.Router();
 
+// Import controller and middleware
+const { uploadfile, uploadMiddleware } = require("../controllers/ImgToUrl");
+const validateToken = require("../Middlewares/validateToken");
 
-router.post("/uploadimg", validateToken, uploadfile);
-
+// Route: Upload image to Cloudinary
+router.post("/uploadimg", uploadMiddleware, uploadfile);
 
 module.exports = router;

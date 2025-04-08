@@ -7,8 +7,11 @@ const connectDb = require("./Config/DbController");
 connectDb();
 
 const app = express();
+// app.use(cors());
 app.use(cors());
-app.use('/uploads', express.static("uploads"))
+
+
+
 app.use(express.json()); // it helps to console req.body data in console 
 
 // setting the port usign env file using dotenc package

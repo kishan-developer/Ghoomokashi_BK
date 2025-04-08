@@ -1,79 +1,25 @@
 const asyncHandler = require("express-async-handler");
-const bcrypt = require("bcryptjs");
-const mongoose = require("mongoose");
-const serviceModel = require("../Models/ServiceModel");
-const multer = require('multer')
-const path = require('path');
-const fs = require('fs');
-// const upload = multer({ dest: 'uploads/' })
+const multer = require("multer");
+const { storage } = require("../utils/cloudinary"); // use the custom cloudinary config
 
+const upload = multer({ storage });
 
+const uploadfile = asyncHandler(async (req, res) => {
+    // At this point, multer will automatically upload the image to Cloudinary
 
-// Ensure the uploads directory exists
-const uploadDir = './uploads';
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Configure storage engine
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    // console.log("req.file", req.file)
+    if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
     }
-});
 
-const fileFilter = (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|gif/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = allowedTypes.test(file.mimetype);
-
-    if (mimetype && extname) {
-        return cb(null, true);
-    } else {
-        return cb(new Error('Error: Only images are allowed! (jpeg, jpg, png, gif)'));
-    }
-};
-
-const upload = multer({ storage, fileFilter }).single('image');
-
-// Endpoint to upload image and return imgUrl
-const uploadfile = asyncHandler(async(req, res) => {
-    upload(req, res, (err) => {
-        if (err) {
-            return res.status(400).json({ status: 'error', message: err.message });
-        }
-
-        if (!req.file) {
-            return res.status(400).json({ status: 'error', message: 'No file uploaded' });
-        }
-
-        const imgUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
-
-        res.status(200).json({
-            status: 'success',
-            message: 'Image uploaded successfully',
-            imgUrl
-        });
+    res.status(200).json({
+        imageUrl: req.file.path,       // Cloudinary image URL
+        publicId: req.file.filename,   // Public ID for later use (delete/update)
+        message: "Image uploaded successfully"
     });
 });
 
-//create a new service page 
-const getImgFiletoUrl = asyncHandler(async(req, res)=> {
-    const { title, ImageUrl, content } = req.body;
+// Middleware to use in your route
+const uploadMiddleware = upload.single("image");
 
-    console.log("req.body", req.body);
-
-    const serviceData = await serviceModel.create(req.body)
-
-    res.status(200).json({
-        status: "Success",
-        message: "service is created!",
-        data: serviceData
-    })
-})
-
-
-module.exports = { uploadfile }
+module.exports = { uploadfile, uploadMiddleware };
