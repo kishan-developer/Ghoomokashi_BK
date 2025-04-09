@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const multer = require("multer");
-const { storage } = require("../utils/cloudinary"); // use the custom cloudinary config
+const { storage } = require("../Utils/cloudinary"); // use the custom cloudinary config
 const NodeCache = require("node-cache");
 
 
