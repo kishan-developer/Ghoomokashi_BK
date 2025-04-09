@@ -1,14 +1,19 @@
 const express = require("express");
 const dotenv = require("dotenv").config();
 const cors = require("cors");
+const NodeCache = require("node-cache");
 // const Razorpay = require("razorpay");
 const errorHandler = require("./Middlewares/errorHandler");
 const connectDb = require("./Config/DbController");
 connectDb();
 
 const app = express();
+const nodecache = new NodeCache()
 // app.use(cors());
-app.use(cors());
+app.use(cors({
+    origin: 'https://ghoomokashi.com',
+    credentials: true
+}));
 
 
 

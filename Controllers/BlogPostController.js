@@ -3,12 +3,17 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 const BlogModel = require("../Models/BlogModel");
+const NodeCache = require("node-cache");
 
+
+const nodecache = new NodeCache()
 
 const createBlogPost = asyncHandler(async (req, res)=> {
     const { title, imageUlr, author, tags, categories } = req.body;
 
     const post = await BlogModel.create(req.body)
+
+    nodecache.del("blogs");
 
     if(!post){
         res.status(400);
@@ -26,6 +31,8 @@ const createBlogPost = asyncHandler(async (req, res)=> {
 const getOnePost = asyncHandler(async (req, res) => {
 
     const { _id } = req.params;
+
+    nodecache.del("blogs");
     
     const getPost = await BlogModel.findById({ _id });
 
@@ -45,7 +52,7 @@ const getOnePost = asyncHandler(async (req, res) => {
 // update one user details
 const updateBlogPost = asyncHandler(async (req, res) => {
     const { _id } = req.params;
-    console.log("req.body", req.body);
+    // console.log("req.body", req.body);
     const {  title, ImageUrl, content } = req.body;
 
     if (!_id) {
@@ -53,11 +60,15 @@ const updateBlogPost = asyncHandler(async (req, res) => {
         throw new Error("_id Not Found, Something went Wrong!")
     }
 
+    
+
     const updateddata = await BlogModel.findByIdAndUpdate(
         { _id: _id },
         { $set: { title:title, ImageUrl:ImageUrl, content:content }},
         { returnDocument: "after", upsert: true }
     )
+
+    nodecache.del("blogs");
 
     if (!updateddata) {
         res.status(400)
@@ -78,6 +89,8 @@ const deleteBlogPost = asyncHandler(async (req, res) => {
         res.status(401);
         throw new Error("blog Details not valid!")
     }
+
+    nodecache.del("blogs");
 
     // check service for new user 
     const blog = await BlogModel.findById({ _id:_id });
@@ -101,9 +114,16 @@ const deleteBlogPost = asyncHandler(async (req, res) => {
 })
 
 const getAllBlogPost = asyncHandler(async(req, res)=> {
-    console.log("blogs")
+    // console.log("blogs")
 
-    const blogs = await BlogModel.find();
+    let blogs;
+
+    if(nodecache.has("blogs")){
+        blogs = JSON.parse(nodecache.get("blogs"));
+    }else{
+        blogs = await BlogModel.find();
+        nodecache.set("blogs", JSON.stringify(blogs));
+    } 
 
     if(!blogs){
         res.status(400);

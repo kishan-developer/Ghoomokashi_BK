@@ -67,7 +67,7 @@ const login = async (req, res) => {
 
         // Check if user exists
         const user = await Admin_Model.findOne({ email });
-        console.log("User:", user);
+        // console.log("User:", user);
 
         if (!user) {
             return res.status(401).json({ message: `User with email ${email} not found` });
@@ -76,7 +76,7 @@ const login = async (req, res) => {
         
         // Validate password
         const isMatch = await bcrypt.compare(password, user.password);
-        console.log("Password Match:", isMatch);
+        // console.log("Password Match:", isMatch);
 
         if (!isMatch) {
             return res.status(401).json({ message: "Invalid credentials" });

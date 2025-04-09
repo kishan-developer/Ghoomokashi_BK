@@ -1,7 +1,10 @@
 const asyncHandler = require("express-async-handler");
 const multer = require("multer");
 const { storage } = require("../utils/cloudinary"); // use the custom cloudinary config
+const NodeCache = require("node-cache");
 
+
+const nodecache = new NodeCache()
 const upload = multer({ storage });
 
 const uploadfile = asyncHandler(async (req, res) => {
@@ -11,6 +14,8 @@ const uploadfile = asyncHandler(async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ message: "No file uploaded" });
     }
+
+    
 
     res.status(200).json({
         imageUrl: req.file.path,       // Cloudinary image URL
