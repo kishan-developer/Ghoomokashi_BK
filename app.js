@@ -9,11 +9,11 @@ connectDb();
 
 const app = express();
 const nodecache = new NodeCache()
-// app.use(cors());
-app.use(cors({
-    origin: 'https://ghoomokashi.com',
-    credentials: true
-}));
+app.use(cors());
+// app.use(cors({
+//     origin: 'https://ghoomokashi.com',
+//     credentials: true
+// }));
 
 
 
